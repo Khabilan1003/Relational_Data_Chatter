@@ -1,0 +1,91 @@
+import { IoClose } from "react-icons/io5";
+import { useState } from "react";
+
+function bytesToSize(bytes) {
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+  if (bytes == 0) return "0 Byte";
+  const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+  return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
+}
+
+export const FileInput = ({ selectFile, removeFile }) => {
+  const [file, setFile] = useState(null);
+
+  const loadFile = (event) => {
+    setFile(event.target.files[0]);
+    selectFile(event.target.files[0]);
+  };
+
+  const deleteFile = () => {
+    setFile(null);
+    removeFile();
+  };
+
+  return (
+    <>
+      <div className="flex items-center justify-center w-full">
+        <label
+          for="dropzone-file"
+          className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+        >
+          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            {/* Upload Icon */}
+            <svg
+              className="w-8 h-8 mb-4 text-gray-500"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 16"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+              />
+            </svg>
+
+            {/* Content */}
+            {file == null && (
+              <>
+                <p className="mb-2 text-sm text-gray-500 ">
+                  <span className="font-semibold">Click to upload</span> or drag
+                  and drop
+                </p>
+                <p className="text-xs text-gray-500">
+                  CSV, XLS or XLSX (MAX. 1MB)
+                </p>
+              </>
+            )}
+            {file != null && (
+              <>
+                <p className="flex items-center space-x-2">
+                  <p>
+                    <span className="font-semibold">File Name : </span>
+                    {file.name}
+                  </p>
+                  <IoClose className="h-5 w-5" onClick={deleteFile} />
+                </p>
+                <p>
+                  <span className="font-semibold">File Size : </span>
+                  {bytesToSize(file.size)}
+                </p>
+              </>
+            )}
+          </div>
+
+          {file == null && (
+            <input
+              id="dropzone-file"
+              type="file"
+              accept=".csv, .xls, .xlsx"
+              className="hidden"
+              onClick={loadFile}
+            />
+          )}
+        </label>
+      </div>
+    </>
+  );
+};
